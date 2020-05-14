@@ -69,46 +69,6 @@ public class Log {
     this.id = id;
   }
   
-  public Log save() {
-    Log log = null;
-    
-    try {
-      
-      log = logRepository.save(this);
-      
-    } catch (Exception e) {
-
-      System.out.println("---Erro---");
-      System.out.println(logRepository);
-
-      System.out.println("-------------------------------------------------");   
-      System.out.println(this);
-      
-      System.out.println("-------------------------------------------------");
-      System.out.println("* Verificando log salvo ");
-      System.out.print("* Objeto: ");
-      System.out.println(log);
-
-      System.out.println("-------------------------------------------------");   
-     
-      return log;
-    }
-    
-    /*
- else {
-      System.out.println("Algo deu errado.");
-    }
-    */
-    
-    return log;
-  }
-
-  public static void sl() {
-
-    System.out.println(" No sl: ");
-    System.out.println(logRepository);
-  }
-  
   /**
   * @return the description
   */

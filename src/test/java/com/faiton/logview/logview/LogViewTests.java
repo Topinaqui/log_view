@@ -18,7 +18,7 @@ class LogViewTests {
 
 	@Test
 	public void listLogs() {
-		logController.logs();
+		logController.showLogs();
 	}
 
 }
