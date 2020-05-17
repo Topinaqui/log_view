@@ -68,13 +68,11 @@ public class LogController {
   
   @PostMapping(value="/log/create-from-file")
   public Log createLogFromFile(@RequestParam("logFile") MultipartFile logFile) {
+    Log log = new Log();
     
-    try {
+    try {     
+      int counter = 0;
       
-      InputStream inputStream = logFile.getInputStream();
-      
-      int i, counter = 0;
-      char c;
       
       FlatFileItemReader<LogRecord> fileItemReader = new FlatFileItemReaderBuilder<LogRecord>()
       .name("logRecordJob")
@@ -86,12 +84,11 @@ public class LogController {
       ExecutionContext executionContext = new ExecutionContext();      
       fileItemReader.open(executionContext);
       
+      List<LogRecord> logRecords = new ArrayList<>();
       LogRecord logRecord = null;
-
+      
       while((logRecord = fileItemReader.read()) != null) {
-        
-        System.out.println("Ip: " + logRecord.getIp());
-        
+        logRecords.add(logRecord);       
         
         if (counter > 100) {
           break;
@@ -102,15 +99,15 @@ public class LogController {
       
       System.out.println("Counter: " + counter);
       
+      log.setRecordList(logRecords);
+      
+      logRepository.save(log);
+      
+      
       
     } catch (Exception e) {
-      
-      System.out.println("Error");
-      System.out.println(e.getMessage());
+      System.err.println(e.getMessage());
     }
-    
-    
-    Log log = new Log();
     
     return log;
   }
