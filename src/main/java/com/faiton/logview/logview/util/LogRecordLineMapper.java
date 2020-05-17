@@ -8,9 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.faiton.logview.logview.model.LogRecord;
-
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.batch.item.file.LineMapper;
 
 
@@ -42,30 +39,14 @@ public class LogRecordLineMapper implements LineMapper<LogRecord> {
       } else {
        
         params[paramIndex] = param;
-        
-        System.out.println("Param added: " + param + " Position: " + paramIndex);
 
         param = "";
         paramIndex++;
       }
      
     }
-    
-    // Date date = null;
-    // String ip = (params.length > 1)? params[1] : "";
-    // String requestMethod = (params.length >= 2)? params[1] : "";
-    // String requestStatus = (params.length >= 3)? params[2] : ""; 
-    // String userAgent = (params.length >= 4)? params[3] : ""    
-    System.out.println(line);
-    
-    // for (String string : params) {
-      //   System.out.println(string);
-      // };
-      
+          
       SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");   
-      
-      // Date tempDate = dateFormat.parse(params[0]);
-      // Date date =  dateFormat.format(tempDate);
       
       Date date = dateFormat.parse(params[0]);
       
