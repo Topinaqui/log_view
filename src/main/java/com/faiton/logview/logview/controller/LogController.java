@@ -27,6 +27,7 @@ import javax.validation.constraints.Positive;
 import java.util.Date;
 
 import com.faiton.logview.logview.repository.LogRepository;
+import com.faiton.logview.logview.util.LogRecordLineMapper;
 import com.faiton.logview.logview.model.Log;
 import com.faiton.logview.logview.model.LogRecord;
 
@@ -79,74 +80,17 @@ public class LogController {
       .name("logRecordJob")
       .resource(logFile.getResource())
       .linesToSkip(1)
-      .lineMapper(new LineMapper<LogRecord>() {
-        // {
-
-        @Override
-        public LineMapper<LogRecord> mapLine(String line, int lineNum) throws Exception {
-            String[] tokens = line.split("|");
-
-            if (tokens.length < 1) {
-                throw new DataIntegrityViolationException("Expecting at least one token in input line: " + line);
-            }
-
-            List<LogRecord> data = new ArrayList<>();
-
-            for (String token : tokens) {
-                // data.add(LogRecord.of(token));
-                data.add(new LogRecord());
-            }
-
-            return data;
-        }
-
-          // 5 columns in each row
-        //  void setLineTokenizer(new DelimitedLineTokenizer() {
-        //     {
-        //       setNames(new String[] { "date", "ip", "requestMethod", "requestStatus", "userAgent" });
-        //     }
-        //   });
-
-          // Set values in LogRecord class
-          // setFieldSetMapper(new BeanWrapperFieldSetMapper<LogRecord>() {
-          //   {
-          //     setTargetType(LogRecord.class);
-          //   }
-          // });
-        // }
-      })
-    //   .lineMapper(new LineMapper<List<LogRecord>>() {
-        
-    //     @Override
-    //     public List<LogRecord> mapLine(String line, int lineNum) throws Exception {
-    //         String[] tokens = line.split("|");
-
-    //         if (tokens.length < 1) {
-    //             throw new DataIntegrityViolationException("Expecting at least one token in input line: " + line);
-    //         }
-
-    //         List<LogRecord> data = new ArrayList<>();
-
-    //         for (String token : tokens) {
-    //             // data.add(LogRecord.of(token));
-    //             data.add(new LogRecord());
-    //         }
-
-    //         return data;
-    //     }
-    // })
-      .delimited()
-      // .delimiter("|")
+      .lineMapper(new LogRecordLineMapper())
       .build();
       
-      LogRecord logRecord = null;
-      ExecutionContext executionContext = new ExecutionContext();
-
+      ExecutionContext executionContext = new ExecutionContext();      
       fileItemReader.open(executionContext);
       
+      LogRecord logRecord = null;
+
       while((logRecord = fileItemReader.read()) != null) {
         
-        System.out.println("Data: " + logRecord.getDate());
+        System.out.println("Ip: " + logRecord.getIp());
         
         
         if (counter > 100) {
@@ -154,34 +98,23 @@ public class LogController {
         }
         
         counter++;      
-      } 
-      
-      //    while((i = inputStream.read())!=-1) {
-        
-        //     c = (char)i;
-        
-        //     System.out.print(c);
-        
-        //     if (counter > 100) {
-          //       break;
-          //     }
-          
-          //     counter++;      
-          //  }
-          
-        } catch (Exception e) {
-          
-          System.out.println("Error");
-          System.out.println(e.getMessage());
-        }
-        
-        
-        Log log = new Log();
-        
-        return log;
       }
       
+      System.out.println("Counter: " + counter);
       
       
+    } catch (Exception e) {
+      
+      System.out.println("Error");
+      System.out.println(e.getMessage());
     }
     
+    
+    Log log = new Log();
+    
+    return log;
+  }
+  
+  
+  
+}
