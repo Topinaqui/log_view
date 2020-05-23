@@ -8,13 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
-import javax.persistence.Transient;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.faiton.logview.logview.repository.LogRepository;
 
 @Entity
 public class Log {
@@ -28,10 +23,14 @@ public class Log {
   
   
   @OneToMany( cascade = CascadeType.PERSIST )
-  @JoinTable( joinColumns = @JoinColumn( name="log_id", referencedColumnName="id")) 
+  @JoinColumn( name="logId") 
   List<LogRecord> recordList;
   
   public  Log() {}
+  
+  public  Log(String description) {
+    this.description = description;
+  }
   
   /**
   * @param recordList

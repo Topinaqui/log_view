@@ -26,6 +26,7 @@ import javax.validation.constraints.Positive;
 
 import java.util.Date;
 
+import com.faiton.logview.logview.repository.LogRecordRepository;
 import com.faiton.logview.logview.repository.LogRepository;
 import com.faiton.logview.logview.util.LogRecordLineMapper;
 import com.faiton.logview.logview.model.Log;
@@ -42,6 +43,32 @@ public class LogController {
   
   @Autowired
   private LogRepository logRepository;
+
+  @Autowired
+  private LogRecordRepository logRecordRepository;
+
+  @GetMapping("/test")
+  public Map<String, String> test() {
+
+    Map<String, String> message = new HashMap<>();
+
+    LogRecord logRecord = new LogRecord(new Date(), "ip", "m ethod", "status", "agent");
+    
+    Log log = new Log("Log de teste");
+
+    List<LogRecord> list = new ArrayList<>();
+    list.add(logRecord);
+
+    log = logRepository.save(log);
+
+    logRecord.setLogId(log.getId());
+
+    logRecordRepository.save(logRecord);
+
+    message.put("Sucesso", "O teste foi finalizado");
+
+    return message;
+  }
   
   @GetMapping("/logs")
   public List<Map<String, Object>> showLogs() {
@@ -68,10 +95,11 @@ public class LogController {
   
   @PostMapping(value="/log/create-from-file")
   public Log createLogFromFile(@RequestParam("logFile") MultipartFile logFile) {
-    Log log = new Log();
+    Log log = new Log("Big file");
+
     
-    try {     
-      int counter = 0;
+    try {
+          int counter = 0;
       
       
       FlatFileItemReader<LogRecord> fileItemReader = new FlatFileItemReaderBuilder<LogRecord>()
@@ -86,24 +114,19 @@ public class LogController {
       
       List<LogRecord> logRecords = new ArrayList<>();
       LogRecord logRecord = null;
+
+      log = logRepository.save(log);
       
       while((logRecord = fileItemReader.read()) != null) {
-        logRecords.add(logRecord);       
-        
-        if (counter > 100) {
-          break;
-        }
-        
-        counter++;      
+
+        logRecord.setLogId(log.getId());
+        logRecordRepository.save(logRecord);
+
       }
       
       System.out.println("Counter: " + counter);
       
       log.setRecordList(logRecords);
-      
-      logRepository.save(log);
-      
-      
       
     } catch (Exception e) {
       System.err.println(e.getMessage());
